@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       appBar: _FacebookAppBar(),
       body: _FacebookBody(),
       bottomNavigationBar: SizedBox(
@@ -238,14 +238,13 @@ class _StorySection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Stack(
-                fit: StackFit.expand, // Make the Stack fill the Card
+                fit: StackFit.expand, 
                 children: <Widget>[
                   Image.asset(
                     imagePath,
                     fit: BoxFit.cover,
                   ),
                   
-                  // 2. Gradient Overlay (optional, to make text more readable)
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -256,30 +255,28 @@ class _StorySection extends StatelessWidget {
                     ),
                   ),
 
-                  // 3. Profile Picture (Top Left)
                   Positioned(
                     top: 8,
                     left: 8,
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.blue, width: 3.0), // Blue Facebook border
+                        border: Border.all(color: Colors.blue, width: 3.0), 
                       ),
                       child: const CircleAvatar(
                         radius: 18,
                         backgroundColor: Colors.white,
-                        child: Icon(Icons.person, color: Colors.blue, size: 20), // Placeholder icon
+                        child: Icon(Icons.person, color: Colors.blue, size: 20), 
                       ),
                     ),
                   ),
                   
-                  // 4. User Name (Bottom)
                   Positioned(
                     bottom: 8,
                     left: 8,
                     right: 8,
                     child: Text(
-                      userName, // Replace with a real name list later
+                      userName, 
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -340,21 +337,18 @@ class _PostWidget extends StatelessWidget {
           child: Text('My first post in here.'),
         ),
 
-        // Post Image (The main content)
         Image.asset(
-          'assets/images/image1.avif', // **You must add an image file (e.g., neon_city.jpg) to your assets folder**
+          'assets/images/image1.avif', 
           fit: BoxFit.cover,
           width: double.infinity,
           height: 300,
         ),
         
-        // Post Actions Bar (Like, Comment, Share)
         const Padding(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              // Like Button
               Row(
                 children: <Widget>[
                   Icon(Icons.thumb_up_alt_outlined, size: 20, color: Colors.grey),
@@ -362,7 +356,6 @@ class _PostWidget extends StatelessWidget {
                   Text('Like', style: TextStyle(color: Colors.grey)),
                 ],
               ),
-              // Comment Button
               Row(
                 children: <Widget>[
                   Icon(Icons.comment_outlined, size: 20, color: Colors.grey),
@@ -370,7 +363,6 @@ class _PostWidget extends StatelessWidget {
                   Text('Comment', style: TextStyle(color: Colors.grey)),
                 ],
               ),
-              // Share Button
               Row(
                 children: <Widget>[
                   Icon(Icons.share_outlined, size: 20, color: Colors.grey),

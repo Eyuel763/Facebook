@@ -1,4 +1,5 @@
-import 'package:facebook/home.dart';
+// import 'package:facebook/home.dart';
+import 'package:facebook/login_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -26,7 +27,7 @@ class CenteredFacebookLogoPage extends StatelessWidget {
       backgroundColor: Colors.white,
       
       body:  Center(
-        child:IconButton(onPressed: ()=>{Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()))}, icon: Icon(Icons.facebook, color: Color.fromARGB(31, 47, 164, 139),size: 25,))
+        child:IconButton(onPressed: ()=>{Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()))}, icon: Icon(Icons.facebook, color: Color.fromARGB(31, 47, 164, 139),size: 25,))
       ),
     );
   }
