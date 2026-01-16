@@ -1,34 +1,24 @@
-// import 'package:facebook/home.dart';
-import 'package:facebook/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'login_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: CenteredFacebookLogoPage()
-    );
-  }
-}
-
-class CenteredFacebookLogoPage extends StatelessWidget {
-  const CenteredFacebookLogoPage({super.key});
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      
-      body:  Center(
-        child:IconButton(onPressed: ()=>{Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()))}, icon: Icon(Icons.facebook, color: Color.fromARGB(31, 47, 164, 139),size: 25,))
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Facebook Clone',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const LoginPage(),
     );
   }
 }

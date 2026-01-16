@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'friends_page.dart';
+import 'auth_service.dart';
+import 'login_page.dart';
+import 'notifications_page.dart';
 
 const List<String> storyImages = [
-  'assets/images/image1.avif',
-  'assets/images/image2.avif',
-  'assets/images/image3.avif',
-  'assets/images/image4.avif',
-  'assets/images/image5.avif',
+  'assets/images/image1.jpg',
+  'assets/images/image2.jpg',
+  'assets/images/image3.jpg',
+  'assets/images/image4.jpg',
+  'assets/images/image5.jpg',
 ];
 
 const List<String> userNames = [
@@ -16,89 +21,27 @@ const List<String> userNames = [
   'Eva Green',
 ];
 
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _FacebookAppBar(),
-      body: _FacebookBody(),
-      bottomNavigationBar: SizedBox(
-        height: 50,
-        child: Center(
-          child: Text(
-            'Facebook Clone © 2024',
-            style: TextStyle(color: Colors.grey),
-          ),
+    return DefaultTabController(
+      length: 5,
+      child: Scaffold(
+        appBar: const _FacebookAppBar(),
+        body: const TabBarView(
+          children: [
+            _FacebookBody(),
+            FriendsPage(),
+            Center(child: Text("Videos")),
+            NotificationsPage(),
+            Center(child: Text("Menu")),
+          ],
         ),
       ),
     );
   }
-}
-
-class _TopTitleBar extends StatelessWidget {
-  const _TopTitleBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 12.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.only(left: 12.0),
-            child: Text(
-              'facebook',
-              style: TextStyle(
-                color: Colors.blue,
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Roboto',
-              ),
-            ),
-          ),
-          Row(
-            children: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.search, color: Colors.black),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.menu, color: Colors.black),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _IconTabBar extends StatelessWidget implements PreferredSizeWidget {
-  const _IconTabBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return const TabBar(
-      labelColor: Colors.blue, // Color for the selected icon
-      unselectedLabelColor: Colors.grey, // Color for the unselected icons
-      indicatorColor: Colors.blue, // The line below the selected icon
-      tabs: <Widget>[
-        Tab(icon: Icon(Icons.home, size: 28)), 
-        Tab(icon: Icon(Icons.people_alt)), 
-        Tab(icon: Icon(Icons.ondemand_video)), 
-        Tab(icon: Icon(Icons.notifications_none)), 
-        Tab(icon: Icon(Icons.menu)), 
-      ],
-    );
-  }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(48.0);
 }
 
 class _FacebookAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -106,23 +49,68 @@ class _FacebookAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PreferredSize(
-      preferredSize: Size.fromHeight(kToolbarHeight * 2), 
-      child: DefaultTabController(
-        length: 5, 
-        child: Column(
-          children: <Widget>[
-            SizedBox(height: 24),
-            _TopTitleBar(),
-            _IconTabBar(),
-          ],
-        ),
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.only(top: 35),
+      child: Column(
+        children: [
+          _buildTopTitleBar(context),
+          const TabBar(
+            labelColor: Colors.blue,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: Colors.blue,
+            tabs: [
+              Tab(icon: Icon(Icons.home, size: 28)),
+              Tab(icon: Icon(Icons.people_alt, size: 28)),
+              Tab(icon: Icon(Icons.ondemand_video, size: 28)),
+              Tab(icon: Icon(Icons.notifications_none, size: 28)),
+              Tab(icon: Icon(Icons.menu, size: 28)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopTitleBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'facebook',
+            style: TextStyle(
+              color: Colors.blue,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.search, color: Colors.black),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(Icons.logout, color: Colors.red),
+                onPressed: () async {
+                  await AuthService().signOut();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(128.0);
+  Size get preferredSize => const Size.fromHeight(115.0);
 }
 
 class _FacebookBody extends StatelessWidget {
@@ -131,16 +119,12 @@ class _FacebookBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      children: const <Widget>[
+      children: const [
         _PostCreationBar(),
-        Divider(height: 1, thickness: 8, color: Colors.black12), 
-        
+        Divider(height: 1, thickness: 8, color: Colors.black12),
         _StorySection(),
-        Divider(height: 1, thickness: 8, color: Colors.black12), 
-
+        Divider(height: 1, thickness: 8, color: Colors.black12),
         _PostWidget(),
-        Divider(height: 1, thickness: 8, color: Colors.black12), 
-        
       ],
     );
   }
@@ -151,28 +135,24 @@ class _PostCreationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(12.0),
       child: Row(
-        children: <Widget>[
-          const CircleAvatar(
-            backgroundColor: Colors.black12, 
-            radius: 20,
-            child: Icon(Icons.person, color: Colors.white), 
+        children: [
+          CircleAvatar(
+            backgroundImage: user?.photoURL != null
+                ? NetworkImage(user!.photoURL!)
+                : null,
+            backgroundColor: Colors.grey[300],
+            child: user?.photoURL == null
+                ? const Icon(Icons.person, color: Colors.white)
+                : null,
           ),
-          const SizedBox(width: 8), 
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black12),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Text(
-                "What's on your mind?",
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
+          const SizedBox(width: 12),
+          const Text(
+            "What's on your mind?",
+            style: TextStyle(color: Colors.grey, fontSize: 16),
           ),
         ],
       ),
@@ -186,111 +166,66 @@ class _StorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200, 
+      height: 200,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: storyImages.length + 1, 
+        itemCount: storyImages.length + 1,
         itemBuilder: (context, index) {
-          
-          if (index == 0) {
-            return const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 120, 
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: Card(
-                        clipBehavior: Clip.antiAlias,
-                        elevation: 2.0,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              CircleAvatar(
-                                radius: 18,
-                                backgroundColor: Colors.blue,
-                                child: Icon(Icons.add, color: Colors.white),
-                              ),
-                              SizedBox(height: 4),
-                              Text('Create Story', style: TextStyle(fontSize: 12)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
+          if (index == 0) return _buildCreateStoryCard();
+          return _buildUserStoryCard(index - 1);
+        },
+      ),
+    );
+  }
 
-          final String imagePath = storyImages[index - 1]; 
-          final String userName = userNames[index - 1];
-          
-          return Container(
-            width: 120,
-            margin: const EdgeInsets.only(top: 8, bottom: 8, right: 8), 
-            child: Card(
-              clipBehavior: Clip.antiAlias, 
-              elevation: 2.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Stack(
-                fit: StackFit.expand, 
-                children: <Widget>[
-                  Image.asset(
-                    imagePath,
-                    fit: BoxFit.cover,
-                  ),
-                  
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.black.withOpacity(0.5), Colors.transparent],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                      ),
-                    ),
-                  ),
-
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.blue, width: 3.0), 
-                      ),
-                      child: const CircleAvatar(
-                        radius: 18,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.person, color: Colors.blue, size: 20), 
-                      ),
-                    ),
-                  ),
-                  
-                  Positioned(
-                    bottom: 8,
-                    left: 8,
-                    right: 8,
-                    child: Text(
-                      userName, 
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+  Widget _buildCreateStoryCard() {
+    return Container(
+      width: 110,
+      margin: const EdgeInsets.all(8),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                color: Colors.grey[200],
+                child: const Icon(Icons.add, color: Colors.blue),
               ),
             ),
-          );
-        },
+            const Padding(
+              padding: EdgeInsets.all(4),
+              child: Text("Create Story", style: TextStyle(fontSize: 12)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserStoryCard(int index) {
+    return Container(
+      width: 110,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(storyImages[index], fit: BoxFit.cover),
+            Positioned(
+              bottom: 8,
+              left: 8,
+              child: Text(
+                userNames[index],
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -303,76 +238,53 @@ class _PostWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: <Widget>[
-              const CircleAvatar(
-                radius: 18,
-                backgroundImage: AssetImage('assets/images/image1.avif'),
-              ),
-              const SizedBox(width: 8),
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Code HQ',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'a few seconds ago',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ],
-              ),
-              const Spacer(), 
-              const Icon(Icons.more_horiz), 
-            ],
+      children: [
+        const ListTile(
+          leading: CircleAvatar(
+            backgroundImage: AssetImage('assets/images/image1.jpg'),
           ),
+          title: Text('Code HQ', style: TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text('a few seconds ago'),
+          trailing: Icon(Icons.more_horiz),
         ),
-        
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text('My first post in here.'),
         ),
-
         Image.asset(
-          'assets/images/image1.avif', 
+          'assets/images/image1.jpg',
           fit: BoxFit.cover,
           width: double.infinity,
           height: 300,
         ),
-        
         const Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+          padding: EdgeInsets.symmetric(vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Icon(Icons.thumb_up_alt_outlined, size: 20, color: Colors.grey),
-                  SizedBox(width: 4),
-                  Text('Like', style: TextStyle(color: Colors.grey)),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Icon(Icons.comment_outlined, size: 20, color: Colors.grey),
-                  SizedBox(width: 4),
-                  Text('Comment', style: TextStyle(color: Colors.grey)),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Icon(Icons.share_outlined, size: 20, color: Colors.grey),
-                  SizedBox(width: 4),
-                  Text('Share', style: TextStyle(color: Colors.grey)),
-                ],
-              ),
+            children: [
+              _ActionBtn(Icons.thumb_up_alt_outlined, "Like"),
+              _ActionBtn(Icons.comment_outlined, "Comment"),
+              _ActionBtn(Icons.share_outlined, "Share"),
             ],
           ),
         ),
+      ],
+    );
+  }
+}
+
+class _ActionBtn extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _ActionBtn(this.icon, this.label);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: Colors.grey),
+        const SizedBox(width: 4),
+        Text(label, style: const TextStyle(color: Colors.grey)),
       ],
     );
   }
